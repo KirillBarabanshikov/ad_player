@@ -25,6 +25,12 @@ class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return _controller.value.isInitialized
         ? AspectRatio(

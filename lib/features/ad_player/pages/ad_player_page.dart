@@ -8,10 +8,14 @@ class AdPlayerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: AdPlayerWidget(
-        keyApi: '',
-        shopId: '',
-        timeUpdate: '',
+      body: SizedBox(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        child: AdPlayerWidget(
+          keyApi: '',
+          shopId: '',
+          timeUpdate: '',
+        ),
       ),
     );
   }
