@@ -51,18 +51,15 @@ class _AdPlayerPlaylistState extends State<AdPlayerPlaylist> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _controller,
-        children: widget.playlist.map((url) {
-          if (url.contains('.mp4')) {
-            return AdPlayerPlaylistVideo(url: url);
-          }
-          return AdPlayerPlaylistImage(url: url);
-        }).toList(),
-      ),
+    return PageView(
+      physics: const NeverScrollableScrollPhysics(),
+      controller: _controller,
+      children: widget.playlist.map((url) {
+        if (url.contains('.mp4')) {
+          return AdPlayerPlaylistVideo(url: url);
+        }
+        return AdPlayerPlaylistImage(url: url);
+      }).toList(),
     );
   }
 }
