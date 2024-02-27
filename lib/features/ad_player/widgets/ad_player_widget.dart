@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import '../repository/ad_player_repository.dart';
+import '../repository/models/playlist_model.dart';
 import 'ad_player_playlist.dart';
 
-final playlist = [
-  "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=2030&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1587370560942-ad2a04eabb6d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-];
-
-class AdPlayerWidget extends StatelessWidget {
+class AdPlayerWidget extends StatefulWidget {
   const AdPlayerWidget({
     super.key,
     required this.keyApi,
@@ -22,7 +18,29 @@ class AdPlayerWidget extends StatelessWidget {
   final String timeUpdate;
 
   @override
+  State<AdPlayerWidget> createState() => _AdPlayerWidgetState();
+}
+
+class _AdPlayerWidgetState extends State<AdPlayerWidget> {
+  late Future<PlaylistModel> _futurePlaylist;
+
+  @override
+  void initState() {
+    super.initState();
+    _futurePlaylist = AdPlayerRepository().getPlaylist();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return AdPlayerPlaylist(playlist: playlist);
+    return FutureBuilder<PlaylistModel>(
+      future: _futurePlaylist,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return AdPlayerPlaylist(playlist: snapshot.data!.assets);
+        }
+
+        return const CircularProgressIndicator();
+      },
+    );
   }
 }
