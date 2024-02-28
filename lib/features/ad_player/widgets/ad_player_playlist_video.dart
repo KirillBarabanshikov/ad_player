@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
+
+import '../bloc/ad_player_bloc.dart';
 
 class AdPlayerPlaylistVideo extends StatefulWidget {
   const AdPlayerPlaylistVideo({
@@ -20,8 +23,15 @@ class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
-    _controller.initialize().then((_) => setState(() {}));
-    _controller.play();
+    _controller.initialize().then((_) {
+      setState(() {});
+      _controller.addListener(() {
+        if (_controller.value.position == _controller.value.duration) {
+          BlocProvider.of<AdPlayerBloc>(context).add(AdPlayerNextPage());
+        }
+      });
+      _controller.play();
+    });
   }
 
   @override
