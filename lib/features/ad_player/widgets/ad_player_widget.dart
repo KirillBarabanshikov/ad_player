@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import '../repository/ad_player_repository.dart';
 import '../repository/models/playlist_model.dart';
@@ -39,7 +38,7 @@ class _AdPlayerWidgetState extends State<AdPlayerWidget> {
           return AdPlayerPlaylist(playlist: snapshot.data!.assets);
         }
 
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

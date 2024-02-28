@@ -25,8 +25,18 @@ class _AdPlayerPlaylistState extends State<AdPlayerPlaylist> {
   @override
   void initState() {
     super.initState();
+    _startAutoPlay();
+  }
 
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+    _timer.cancel();
+  }
+
+  void _startAutoPlay() {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       setState(() {
         if (_currentIndex < widget.playlist.length - 1) {
           _currentIndex++;
@@ -43,19 +53,12 @@ class _AdPlayerPlaylistState extends State<AdPlayerPlaylist> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-    _timer.cancel();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return PageView(
-      physics: const NeverScrollableScrollPhysics(),
       controller: _controller,
+      physics: const NeverScrollableScrollPhysics(),
       children: widget.playlist.map((url) {
-        if (url.contains('.mp4')) {
+        if (url.contains('.mp4') || url.contains('.webm')) {
           return AdPlayerPlaylistVideo(url: url);
         }
         return AdPlayerPlaylistImage(url: url);
