@@ -1,23 +1,30 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+
+import '../repository/ad_player_repository.dart';
 
 part 'ad_player_event.dart';
 
 part 'ad_player_state.dart';
 
 class AdPlayerBloc extends Bloc<AdPlayerEvent, AdPlayerState> {
-  AdPlayerBloc(this.controller) : super(const AdPlayerState(currentPage: 0)) {
-    on<AdPlayerNextPage>((event, emit) {
-      emit(AdPlayerState(
-          currentPage: state.currentPage < 5 ? state.currentPage + 1 : 0));
-      controller.animateToPage(
-        state.currentPage,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
-    });
+  AdPlayerBloc(this._adPlayerRepository) : super(const AdPlayerState()) {
+    on<AdPlayerGetPlaylistEvent>(_onGetPlaylist);
+    on<AdPlayerChangePageEvent>(_onChangePage);
   }
 
-  final PageController controller;
+  final AdPlayerRepository _adPlayerRepository;
+
+  _onGetPlaylist(
+      AdPlayerGetPlaylistEvent event, Emitter<AdPlayerState> emit) async {
+    final playlist = await _adPlayerRepository.getPlaylist();
+    emit(state.copyWith(playlist: playlist.assets));
+  }
+
+  _onChangePage(AdPlayerChangePageEvent event, Emitter<AdPlayerState> emit) {
+    final currentPage = state.currentPage < state.playlist.length - 1
+        ? state.currentPage + 1
+        : 0;
+    emit(state.copyWith(currentPage: currentPage));
+  }
 }

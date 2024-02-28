@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/ad_player_bloc.dart';
 import '../repository/ad_player_repository.dart';
-import '../repository/models/playlist_model.dart';
 import 'ad_player_playlist.dart';
 
 class AdPlayerWidget extends StatefulWidget {
@@ -21,25 +22,28 @@ class AdPlayerWidget extends StatefulWidget {
 }
 
 class _AdPlayerWidgetState extends State<AdPlayerWidget> {
-  late Future<PlaylistModel> _futurePlaylist;
+  final _adPlayerBloc = AdPlayerBloc(AdPlayerRepository());
 
   @override
   void initState() {
     super.initState();
-    _futurePlaylist = AdPlayerRepository().getPlaylist();
+    _adPlayerBloc.add(AdPlayerGetPlaylistEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<PlaylistModel>(
-      future: _futurePlaylist,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return AdPlayerPlaylist(playlist: snapshot.data!.assets);
-        }
+    return BlocProvider<AdPlayerBloc>(
+      create: (context) => _adPlayerBloc,
+      child: BlocBuilder<AdPlayerBloc, AdPlayerState>(
+        bloc: _adPlayerBloc,
+        builder: (context, state) {
+          if (state.playlist.isNotEmpty) {
+            return AdPlayerPlaylist(playlist: state.playlist);
+          }
 
-        return const Center(child: CircularProgressIndicator());
-      },
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
 }

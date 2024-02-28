@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
-
-import '../bloc/ad_player_bloc.dart';
 
 class AdPlayerPlaylistVideo extends StatefulWidget {
   const AdPlayerPlaylistVideo({
     super.key,
     required this.url,
+    required this.changePage,
   });
 
   final String url;
+  final void Function(Duration duration) changePage;
 
   @override
   State<AdPlayerPlaylistVideo> createState() => _AdPlayerPlaylistVideoState();
@@ -22,22 +21,21 @@ class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
-    _controller.initialize().then((_) {
-      setState(() {});
-      _controller.addListener(() {
-        if (_controller.value.position == _controller.value.duration) {
-          BlocProvider.of<AdPlayerBloc>(context).add(AdPlayerNextPage());
-        }
-      });
-      _controller.play();
-    });
+    _initializeVideo();
   }
 
   @override
   void dispose() {
     super.dispose();
     _controller.dispose();
+  }
+
+  void _initializeVideo() async {
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+    await _controller.initialize();
+    setState(() {});
+    _controller.play();
+    widget.changePage(_controller.value.duration);
   }
 
   @override
