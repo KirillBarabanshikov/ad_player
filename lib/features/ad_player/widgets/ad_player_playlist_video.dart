@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/file.dart';
 import 'package:video_player/video_player.dart';
 
 class AdPlayerPlaylistVideo extends StatefulWidget {
@@ -6,44 +7,37 @@ class AdPlayerPlaylistVideo extends StatefulWidget {
     super.key,
     required this.url,
     required this.changePage,
+    required this.controller,
   });
 
-  final String url;
+  final File url;
   final void Function(Duration duration) changePage;
+  final VideoPlayerController controller;
 
   @override
   State<AdPlayerPlaylistVideo> createState() => _AdPlayerPlaylistVideoState();
 }
 
 class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
-  late VideoPlayerController _controller;
-
   @override
   void initState() {
     super.initState();
-    _initializeVideo();
+    widget.controller.seekTo(Duration.zero);
+    widget.controller.play();
+    widget.changePage(widget.controller.value.duration);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
-  }
-
-  void _initializeVideo() async {
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
-    await _controller.initialize();
-    setState(() {});
-    _controller.play();
-    widget.changePage(_controller.value.duration);
   }
 
   @override
   Widget build(BuildContext context) {
-    return _controller.value.isInitialized
+    return widget.controller.value.isInitialized
         ? AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
+            aspectRatio: widget.controller.value.aspectRatio,
+            child: VideoPlayer(widget.controller),
           )
         : Container();
   }

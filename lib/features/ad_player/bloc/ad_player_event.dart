@@ -8,8 +8,3 @@ class AdPlayerGetPlaylistEvent extends AdPlayerEvent {
   @override
   List<Object?> get props => [];
 }
-
-class AdPlayerChangePageEvent extends AdPlayerEvent {
-  @override
-  List<Object?> get props => [];
-}

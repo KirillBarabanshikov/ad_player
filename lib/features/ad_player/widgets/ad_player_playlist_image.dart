@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/file.dart';
 
 class AdPlayerPlaylistImage extends StatefulWidget {
   const AdPlayerPlaylistImage({
@@ -7,7 +8,7 @@ class AdPlayerPlaylistImage extends StatefulWidget {
     required this.changePage,
   });
 
-  final String url;
+  final File url;
   final void Function(Duration duration) changePage;
 
   @override
@@ -18,12 +19,12 @@ class _AdPlayerPlaylistImageState extends State<AdPlayerPlaylistImage> {
   @override
   void initState() {
     super.initState();
-    widget.changePage(const Duration(seconds: 5));
+    widget.changePage(const Duration(seconds: 2));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
+    return Image.file(
       widget.url,
       fit: BoxFit.cover,
     );

@@ -10,7 +10,6 @@ part 'ad_player_state.dart';
 class AdPlayerBloc extends Bloc<AdPlayerEvent, AdPlayerState> {
   AdPlayerBloc(this._adPlayerRepository) : super(const AdPlayerState()) {
     on<AdPlayerGetPlaylistEvent>(_onGetPlaylist);
-    on<AdPlayerChangePageEvent>(_onChangePage);
   }
 
   final AdPlayerRepository _adPlayerRepository;
@@ -18,13 +17,6 @@ class AdPlayerBloc extends Bloc<AdPlayerEvent, AdPlayerState> {
   _onGetPlaylist(
       AdPlayerGetPlaylistEvent event, Emitter<AdPlayerState> emit) async {
     final playlist = await _adPlayerRepository.getPlaylist();
-    emit(state.copyWith(playlist: playlist.assets));
-  }
-
-  _onChangePage(AdPlayerChangePageEvent event, Emitter<AdPlayerState> emit) {
-    final currentPage = state.currentPage < state.playlist.length - 1
-        ? state.currentPage + 1
-        : 0;
-    emit(state.copyWith(currentPage: currentPage));
+    emit(AdPlayerState(playlist: playlist.assets));
   }
 }
