@@ -1,31 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/file.dart';
 
-class AdPlayerPlaylistImage extends StatefulWidget {
+class AdPlayerPlaylistImage extends StatelessWidget {
   const AdPlayerPlaylistImage({
     super.key,
-    required this.url,
-    required this.changePage,
+    required this.file,
   });
 
-  final File url;
-  final void Function(Duration duration) changePage;
-
-  @override
-  State<AdPlayerPlaylistImage> createState() => _AdPlayerPlaylistImageState();
-}
-
-class _AdPlayerPlaylistImageState extends State<AdPlayerPlaylistImage> {
-  @override
-  void initState() {
-    super.initState();
-    widget.changePage(const Duration(seconds: 2));
-  }
+  final File file;
 
   @override
   Widget build(BuildContext context) {
     return Image.file(
-      widget.url,
+      file,
       fit: BoxFit.cover,
     );
   }

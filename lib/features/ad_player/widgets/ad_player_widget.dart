@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 import '../bloc/ad_player_bloc.dart';
 import '../repository/ad_player_repository.dart';
@@ -22,7 +23,7 @@ class AdPlayerWidget extends StatefulWidget {
 }
 
 class _AdPlayerWidgetState extends State<AdPlayerWidget> {
-  final _adPlayerBloc = AdPlayerBloc(AdPlayerRepository());
+  final _adPlayerBloc = AdPlayerBloc(GetIt.I.get<AdPlayerRepository>());
 
   @override
   void initState() {
