@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ad_player/utils/is_video_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -59,8 +60,9 @@ class _AdPlayerPlaylistState extends State<AdPlayerPlaylist> {
             if (snapshot.hasData) {
               final file = snapshot.data!;
               final basename = file.basename;
+              final isVideo = isVideoFile(basename);
 
-              if (basename.contains('.mp4') || basename.contains('.webm')) {
+              if (isVideo) {
                 return AdPlayerPlaylistVideo(file: file);
               }
 
