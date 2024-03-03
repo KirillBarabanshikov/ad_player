@@ -3,19 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 import '../bloc/ad_player_bloc.dart';
-import '../repository/ad_player_repository.dart';
+import '../repository/repository.dart';
 import 'ad_player_playlist.dart';
 
 class AdPlayerWidget extends StatefulWidget {
   const AdPlayerWidget({
     super.key,
-    required this.keyApi,
+    required this.apiKey,
     required this.shopId,
     required this.timeUpdate,
   });
 
-  final String keyApi;
-  final String shopId;
+  final String apiKey;
+  final int shopId;
   final String timeUpdate;
 
   @override
@@ -28,7 +28,10 @@ class _AdPlayerWidgetState extends State<AdPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    _adPlayerBloc.add(AdPlayerGetPlaylistEvent());
+    _adPlayerBloc.add(AdPlayerGetAdEvent(
+      id: widget.shopId,
+      apiKey: widget.apiKey,
+    ));
   }
 
   @override
@@ -38,8 +41,12 @@ class _AdPlayerWidgetState extends State<AdPlayerWidget> {
       child: BlocBuilder<AdPlayerBloc, AdPlayerState>(
         bloc: _adPlayerBloc,
         builder: (context, state) {
-          if (state.playlist.isNotEmpty) {
-            return AdPlayerPlaylist(playlist: state.playlist);
+          if (state is AdPlayerLoadedState) {
+            return AdPlayerPlaylist(advertisement: state.advertisement);
+          }
+
+          if (state is AdPlayerLoadingFailure) {
+            return Center(child: Text('${state.exception}'));
           }
 
           return const Center(child: CircularProgressIndicator());

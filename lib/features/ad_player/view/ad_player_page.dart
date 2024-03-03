@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/ad_player_widget.dart';
+import '../widgets/widgets.dart';
 
 class AdPlayerPage extends StatelessWidget {
   const AdPlayerPage({super.key});
@@ -12,8 +12,8 @@ class AdPlayerPage extends StatelessWidget {
         width: double.maxFinite,
         height: double.maxFinite,
         child: AdPlayerWidget(
-          keyApi: '',
-          shopId: '',
+          apiKey: '4a81161c-64c1-46fa-899c-fe77482f7ed3',
+          shopId: 13,
           timeUpdate: '',
         ),
       ),

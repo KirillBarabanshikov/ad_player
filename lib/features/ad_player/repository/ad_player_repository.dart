@@ -1,17 +1,25 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 
-import 'package:http/http.dart' as http;
-
-import 'models/playlist_model.dart';
+import 'models/advertisement_model.dart';
 
 class AdPlayerRepository {
-  Future<PlaylistModel> getPlaylist() async {
+  const AdPlayerRepository(this.dio);
+
+  final Dio dio;
+
+  Future<AdvertisementModel> getAdvertisementByDrugstoreId(
+    int id,
+    String apiKey,
+  ) async {
     try {
-      final response =
-          await http.get(Uri.parse('http://192.168.0.103:3000/playlists'));
-      final playlist = PlaylistModel.fromJson(jsonDecode(response.body));
-      return playlist;
-    } catch (e) {
+      final response = await dio.get('rest/advertisement/bydrugstoreid/$id',
+          options: Options(
+            headers: {
+              'X-Authorization-token': apiKey,
+            },
+          ));
+      return AdvertisementModel.fromJson(response.data[0]);
+    } on DioException catch (e) {
       throw Exception(e);
     }
   }
