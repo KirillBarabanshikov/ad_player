@@ -42,6 +42,7 @@ class _AdPlayerPlaylistState extends State<AdPlayerPlaylist> {
   @override
   void dispose() {
     super.dispose();
+    _pageController.dispose();
     _timer.cancel();
   }
 

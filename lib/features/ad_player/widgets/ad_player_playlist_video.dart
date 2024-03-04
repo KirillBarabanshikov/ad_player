@@ -33,12 +33,12 @@ class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
+    _controller.dispose();
   }
 
   Future<void> _getThumb() async {
-    var file =
+    FileInfo? file =
         await _cacheManager.getFileFromCache('thumb_${widget.file.basename}');
 
     if (file == null) {
@@ -61,22 +61,22 @@ class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
             aspectRatio: _controller.value.aspectRatio,
             child: VideoPlayer(_controller),
           );
-        } else {
-          return FutureBuilder<FileInfo?>(
-            future:
-                _cacheManager.getFileFromCache('thumb_${widget.file.basename}'),
-            builder: (context, thumbSnapshot) {
-              if (thumbSnapshot.hasData) {
-                return Image.file(
-                  thumbSnapshot.data!.file,
-                  fit: BoxFit.fill,
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          );
         }
+
+        return FutureBuilder<FileInfo?>(
+          future:
+              _cacheManager.getFileFromCache('thumb_${widget.file.basename}'),
+          builder: (context, thumbSnapshot) {
+            if (thumbSnapshot.hasData) {
+              return Image.file(
+                thumbSnapshot.data!.file,
+                fit: BoxFit.fill,
+              );
+            }
+
+            return const Center(child: CircularProgressIndicator());
+          },
+        );
       },
     );
   }
