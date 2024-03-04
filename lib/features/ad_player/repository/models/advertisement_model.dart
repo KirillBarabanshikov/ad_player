@@ -22,8 +22,13 @@ class AdvertisementModel {
   final List<String> types;
   final List<ImageModel> images;
 
-  factory AdvertisementModel.fromJson(Map<String, dynamic> json) =>
-      _$AdvertisementModelFromJson(json);
+  factory AdvertisementModel.fromJson(Map<String, dynamic> json) {
+    if (!(json['types'] as List<dynamic>).contains('ANDROID')) {
+      throw const FormatException('Invalid advertisement type');
+    }
+
+    return _$AdvertisementModelFromJson(json);
+  }
 
   Map<String, dynamic> toJson() => _$AdvertisementModelToJson(this);
 }
