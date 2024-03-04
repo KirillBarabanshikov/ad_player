@@ -1,13 +1,76 @@
 {
-  "playlists": {
-    "playlist": [
-      "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
-      "https://mykaleidoscope.ru/x/uploads/posts/2022-10/1666206241_12-mykaleidoscope-ru-p-kartinka-na-zastavku-oboi-12.jpg",
-      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=2030&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "https://mazwai.com/videvo_files/video/free/2019-03/small_watermarked/180419_Boxing_20_18_preview.webm",
-      "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-      "https://images.unsplash.com/photo-1587370560942-ad2a04eabb6d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    ]
-  }
+  "bydrugstoreid": [
+    {
+      "id": 21,
+      "name": "Тест",
+      "createdAt": "2024-03-03T13:02:08.925+00:00",
+      "updatedAt": "2024-03-03T13:02:08.925+00:00",
+      "dateBegin": "2024-03-03T10:55:11.993+00:00",
+      "dateEnd": "2024-03-03T10:55:11.993+00:00",
+      "interval": 10,
+      "types": [
+        "ANDROID"
+      ],
+      "images": [
+        {
+          "id": 16,
+          "name": "b45096c5-4a7f-410a-a3a4-81cdc1ed538f",
+          "createdAt": "2024-03-03T13:00:55.923+00:00",
+          "updatedAt": "2024-03-03T13:00:55.923+00:00",
+          "url": "http://192.168.0.103:9000/marketing/b45096c5-4a7f-410a-a3a4-81cdc1ed538f"
+        },
+        {
+          "id": 19,
+          "name": "4c6e2419-a7fb-4bf2-8d47-70b791d6165f",
+          "createdAt": "2024-03-03T13:01:15.182+00:00",
+          "updatedAt": "2024-03-03T13:01:15.182+00:00",
+          "url": "http://192.168.0.103:9000/marketing/4c6e2419-a7fb-4bf2-8d47-70b791d6165f"
+        },
+        {
+          "id": 17,
+          "name": "05183f2d-1cd3-4331-bbdd-e25c88c28eaa",
+          "createdAt": "2024-03-03T13:01:04.933+00:00",
+          "updatedAt": "2024-03-03T13:01:04.933+00:00",
+          "url": "http://192.168.0.103:9000/marketing/05183f2d-1cd3-4331-bbdd-e25c88c28eaa"
+        },
+        {
+          "id": 15,
+          "name": "93e7f3fc-20f7-4432-8bff-52c10ad53d1c",
+          "createdAt": "2024-03-03T13:00:49.126+00:00",
+          "updatedAt": "2024-03-03T13:00:49.126+00:00",
+          "url": "http://192.168.0.103:9000/marketing/93e7f3fc-20f7-4432-8bff-52c10ad53d1c"
+        },
+        {
+          "id": 20,
+          "name": "5ea63ab7-d725-4bca-80d4-cbdbb147790f",
+          "createdAt": "2024-03-03T13:01:20.649+00:00",
+          "updatedAt": "2024-03-03T13:01:20.649+00:00",
+          "url": "http://192.168.0.103:9000/marketing/5ea63ab7-d725-4bca-80d4-cbdbb147790f"
+        },
+        {
+          "id": 18,
+          "name": "04ae143a-31c9-47f2-a039-1b64f0b769e4",
+          "createdAt": "2024-03-03T13:01:10.350+00:00",
+          "updatedAt": "2024-03-03T13:01:10.350+00:00",
+          "url": "http://192.168.0.103:9000/marketing/04ae143a-31c9-47f2-a039-1b64f0b769e4"
+        }
+      ],
+      "drugstores": [
+        {
+          "id": 13,
+          "name": "Медус 11",
+          "createdAt": "2024-03-03T12:59:42.654+00:00",
+          "updatedAt": "2024-03-03T12:59:42.654+00:00",
+          "brand": "Бережная Аптека",
+          "region": "Удмуртия",
+          "city": "Ижевск",
+          "address": "Промышленная, 2",
+          "types": [
+            "ANDROID",
+            "LINUX"
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -44,6 +44,7 @@ dependencies:
   video_thumbnail: ^0.5.3
   json_annotation: ^4.8.1
   dio: ^5.4.1
+  hydrated_bloc: ^9.1.4
 
 dev_dependencies:
   flutter_test:
