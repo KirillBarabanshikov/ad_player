@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -24,10 +26,24 @@ class AdPlayerWidget extends StatefulWidget {
 
 class _AdPlayerWidgetState extends State<AdPlayerWidget> {
   final _adPlayerBloc = AdPlayerBloc(GetIt.I.get<AdPlayerRepository>());
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
+    _getAdvertisement();
+    _timer = Timer.periodic(const Duration(hours: 1), (timer) {
+      _getAdvertisement();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
+  }
+
+  void _getAdvertisement() {
     _adPlayerBloc.add(AdPlayerGetAdEvent(
       id: widget.shopId,
       apiKey: widget.apiKey,
@@ -36,21 +52,26 @@ class _AdPlayerWidgetState extends State<AdPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AdPlayerBloc>(
-      create: (context) => _adPlayerBloc,
-      child: BlocBuilder<AdPlayerBloc, AdPlayerState>(
-        bloc: _adPlayerBloc,
-        builder: (context, state) {
-          if (state is AdPlayerLoadedState) {
-            return AdPlayerPlaylist(advertisement: state.advertisement);
-          }
+    return GestureDetector(
+      onSecondaryTap: () {
+        print('right click');
+      },
+      child: BlocProvider<AdPlayerBloc>(
+        create: (context) => _adPlayerBloc,
+        child: BlocBuilder<AdPlayerBloc, AdPlayerState>(
+          bloc: _adPlayerBloc,
+          builder: (context, state) {
+            if (state is AdPlayerLoadedState) {
+              return AdPlayerPlaylist(advertisement: state.advertisement);
+            }
 
-          if (state is AdPlayerLoadingFailure) {
-            return Center(child: Text('${state.exception}'));
-          }
+            if (state is AdPlayerLoadingFailure) {
+              return Center(child: Text('${state.exception}'));
+            }
 
-          return const Center(child: CircularProgressIndicator());
-        },
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }

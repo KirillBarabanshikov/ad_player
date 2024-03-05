@@ -1,6 +1,7 @@
 import 'package:ad_player/features/ad_player/ad_player.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'ad_player_event.dart';
 
@@ -28,11 +29,18 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
   }
 
   _onGetAd(AdPlayerGetAdEvent event, Emitter<AdPlayerState> emit) async {
-    if (state is! AdPlayerLoadedState) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    DateTime lastFetchTime =
+        DateTime.fromMillisecondsSinceEpoch(prefs.getInt('lastFetchTime') ?? 0);
+
+    DateTime now = DateTime.now();
+
+    if (now.difference(lastFetchTime).inDays >= 1) {
       try {
         emit(AdPlayerLoadingState());
         final advertisement = await _adPlayerRepository
             .getAdvertisementByDrugstoreId(event.id, event.apiKey);
+        prefs.setInt('lastFetchTime', now.millisecondsSinceEpoch);
         emit(AdPlayerLoadedState(advertisement: advertisement));
       } catch (e) {
         emit(AdPlayerLoadingFailure(exception: e));

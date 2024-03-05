@@ -31,8 +31,5 @@ void main() async {
     storageDirectory: await getApplicationDocumentsDirectory(),
   );
 
-  // TODO
-  getIt.get<CacheManager>().emptyCache();
-
   runApp(const AppWidget());
 }
