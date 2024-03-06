@@ -10,12 +10,12 @@ SettingsModel _$SettingsModelFromJson(Map<String, dynamic> json) =>
     SettingsModel(
       apiKey: json['apiKey'] as String,
       shopId: json['shopId'] as String,
-      timeUpdate: json['timeUpdate'] as String,
+      timeUpdate: DateTime.parse(json['timeUpdate'] as String),
     );
 
 Map<String, dynamic> _$SettingsModelToJson(SettingsModel instance) =>
     <String, dynamic>{
       'apiKey': instance.apiKey,
       'shopId': instance.shopId,
-      'timeUpdate': instance.timeUpdate,
+      'timeUpdate': instance.timeUpdate.toIso8601String(),
     };

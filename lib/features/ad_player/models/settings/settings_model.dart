@@ -13,7 +13,7 @@ class SettingsModel extends Equatable {
 
   final String apiKey;
   final String shopId;
-  final String timeUpdate;
+  final DateTime timeUpdate;
 
   factory SettingsModel.fromJson(Map<String, dynamic> json) =>
       _$SettingsModelFromJson(json);

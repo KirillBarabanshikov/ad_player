@@ -16,6 +16,7 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
   final _apiKeyController = TextEditingController();
   final _shopIdController = TextEditingController();
   final _timeUpdateController = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -24,7 +25,9 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
 
     _apiKeyController.text = currentSettings?.apiKey ?? '';
     _shopIdController.text = currentSettings?.shopId ?? '';
-    _timeUpdateController.text = currentSettings?.timeUpdate ?? '';
+    _timeUpdateController.text = currentSettings?.timeUpdate == null
+        ? ''
+        : '${currentSettings?.timeUpdate.hour}:${currentSettings?.timeUpdate.minute}';
   }
 
   void _onSubmit() {
@@ -33,7 +36,7 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
     final settings = SettingsModel(
       apiKey: _apiKeyController.text,
       shopId: _shopIdController.text,
-      timeUpdate: _timeUpdateController.text,
+      timeUpdate: _selectedDate,
     );
 
     context
@@ -50,6 +53,24 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
     return null;
   }
 
+  Future<void> _selectTime() async {
+    final TimeOfDay? timeOfDay = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (timeOfDay != null) {
+      _selectedDate = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        timeOfDay.hour,
+        timeOfDay.minute,
+      );
+      _timeUpdateController.text = '${timeOfDay.hour}:${timeOfDay.minute}';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -63,6 +84,7 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
               controller: _apiKeyController,
               textInputAction: TextInputAction.next,
               validator: _validate,
+              obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'apiKey',
               ),
@@ -79,6 +101,8 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
               controller: _timeUpdateController,
               textInputAction: TextInputAction.done,
               validator: _validate,
+              readOnly: true,
+              onTap: () => _selectTime(),
               decoration: const InputDecoration(
                 labelText: 'timeUpdate',
               ),
