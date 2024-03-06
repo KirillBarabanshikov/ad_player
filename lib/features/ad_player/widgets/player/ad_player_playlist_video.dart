@@ -1,9 +1,9 @@
+import 'package:ad_player/utils/generate_video_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 class AdPlayerPlaylistVideo extends StatefulWidget {
   const AdPlayerPlaylistVideo({
@@ -18,37 +18,27 @@ class AdPlayerPlaylistVideo extends StatefulWidget {
 }
 
 class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
-  late VideoPlayerController _controller;
+  late VideoPlayerController _videoController;
   late Future<void> _initializeVideoPlayerFuture;
   final _cacheManager = GetIt.I.get<CacheManager>();
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.file(widget.file);
-    _initializeVideoPlayerFuture =
-        _controller.initialize().then((value) => _controller.play());
-    _getThumb();
+    _videoController = VideoPlayerController.file(widget.file);
+    _initializeVideoPlayerFuture = _initializeVideoPlayer();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    _videoController.dispose();
   }
 
-  Future<void> _getThumb() async {
-    FileInfo? file =
-        await _cacheManager.getFileFromCache('thumb_${widget.file.basename}');
-
-    if (file == null) {
-      final uint8list = await VideoThumbnail.thumbnailData(
-        video: widget.file.path,
-        imageFormat: ImageFormat.WEBP,
-      );
-
-      await _cacheManager.putFile('thumb_${widget.file.basename}', uint8list!);
-    }
+  Future<void> _initializeVideoPlayer() async {
+    await _videoController.initialize();
+    await Future.delayed(const Duration(milliseconds: 600));
+    await _videoController.play();
   }
 
   @override
@@ -57,19 +47,22 @@ class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
+          }
+
           return AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
+            aspectRatio: _videoController.value.aspectRatio,
+            child: VideoPlayer(_videoController),
           );
         }
 
-        return FutureBuilder<FileInfo?>(
-          future:
-              _cacheManager.getFileFromCache('thumb_${widget.file.basename}'),
-          builder: (context, thumbSnapshot) {
-            if (thumbSnapshot.hasData) {
+        return FutureBuilder<File>(
+          future: generateVideoThumbnail(widget.file, _cacheManager),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
               return Image.file(
-                thumbSnapshot.data!.file,
+                snapshot.data!,
                 fit: BoxFit.fill,
               );
             }
