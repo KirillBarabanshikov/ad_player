@@ -1,11 +1,12 @@
 import 'dart:async';
+
 import 'package:ad_player/utils/is_video_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get_it/get_it.dart';
 
-import '../repository/repository.dart';
+import '../../models/models.dart';
 import 'ad_player_playlist_image.dart';
 import 'ad_player_playlist_video.dart';
 

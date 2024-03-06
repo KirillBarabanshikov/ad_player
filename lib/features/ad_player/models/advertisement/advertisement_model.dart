@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'advertisement_model.g.dart';
 
 @JsonSerializable()
-class AdvertisementModel {
+class AdvertisementModel extends Equatable {
   const AdvertisementModel({
     required this.id,
     required this.name,
@@ -31,10 +32,14 @@ class AdvertisementModel {
   }
 
   Map<String, dynamic> toJson() => _$AdvertisementModelToJson(this);
+
+  @override
+  List<Object?> get props =>
+      [id, name, dateBegin, dateEnd, interval, types, images];
 }
 
 @JsonSerializable()
-class ImageModel {
+class ImageModel extends Equatable {
   const ImageModel({
     required this.id,
     required this.name,
@@ -49,4 +54,7 @@ class ImageModel {
       _$ImageModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ImageModelToJson(this);
+
+  @override
+  List<Object?> get props => [id, name, url];
 }

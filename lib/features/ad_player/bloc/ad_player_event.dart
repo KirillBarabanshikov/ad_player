@@ -5,14 +5,19 @@ abstract class AdPlayerEvent extends Equatable {
 }
 
 class AdPlayerGetAdEvent extends AdPlayerEvent {
-  const AdPlayerGetAdEvent({
-    required this.id,
-    required this.apiKey,
-  });
+  const AdPlayerGetAdEvent({required this.settings});
 
-  final int id;
-  final String apiKey;
+  final SettingsModel settings;
 
   @override
-  List<Object?> get props => [id, apiKey];
+  List<Object?> get props => [settings];
+}
+
+class AdPlayerSetSettingsEvent extends AdPlayerEvent {
+  const AdPlayerSetSettingsEvent({required this.settings});
+
+  final SettingsModel settings;
+
+  @override
+  List<Object?> get props => [settings];
 }

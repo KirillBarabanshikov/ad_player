@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'models/advertisement_model.dart';
+import '../models/models.dart';
 
 class AdPlayerRepository {
   const AdPlayerRepository(this.dio);
@@ -8,16 +8,18 @@ class AdPlayerRepository {
   final Dio dio;
 
   Future<AdvertisementModel> getAdvertisementByDrugstoreId(
-    int id,
-    String apiKey,
+    SettingsModel settings,
   ) async {
     try {
-      final response = await dio.get('rest/advertisement/bydrugstoreid/$id',
-          options: Options(
-            headers: {
-              'X-Authorization-token': apiKey,
-            },
-          ));
+      final response = await dio.get(
+        'rest/advertisement/bydrugstoreid/${settings.shopId}',
+        options: Options(
+          headers: {
+            'X-Authorization-token': settings.apiKey,
+          },
+        ),
+      );
+
       return AdvertisementModel.fromJson(response.data[0]);
     } on DioException catch (e) {
       throw Exception(e);

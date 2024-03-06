@@ -1,50 +1,47 @@
-import 'package:ad_player/features/ad_player/ad_player.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import '../models/models.dart';
+import '../repository/ad_player_repository.dart';
 
 part 'ad_player_event.dart';
 
 part 'ad_player_state.dart';
 
+part 'ad_player_bloc.g.dart';
+
 class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
-  AdPlayerBloc(this._adPlayerRepository) : super(AdPlayerInitial()) {
+  AdPlayerBloc(this._adPlayerRepository) : super(const AdPlayerState()) {
     on<AdPlayerGetAdEvent>(_onGetAd);
+    on<AdPlayerSetSettingsEvent>(_onSetSettings);
   }
 
   final AdPlayerRepository _adPlayerRepository;
 
-  @override
-  AdPlayerState? fromJson(Map<String, dynamic> json) {
-    return AdPlayerLoadedState(
-      advertisement: AdvertisementModel.fromJson(json),
-    );
-  }
-
-  @override
-  Map<String, dynamic>? toJson(AdPlayerState state) {
-    if (state is AdPlayerLoadedState) {
-      return state.advertisement.toJson();
-    }
-  }
-
   _onGetAd(AdPlayerGetAdEvent event, Emitter<AdPlayerState> emit) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateTime lastFetchTime =
-        DateTime.fromMillisecondsSinceEpoch(prefs.getInt('lastFetchTime') ?? 0);
-
-    DateTime now = DateTime.now();
-
-    if (now.difference(lastFetchTime).inDays >= 1) {
-      try {
-        emit(AdPlayerLoadingState());
-        final advertisement = await _adPlayerRepository
-            .getAdvertisementByDrugstoreId(event.id, event.apiKey);
-        prefs.setInt('lastFetchTime', now.millisecondsSinceEpoch);
-        emit(AdPlayerLoadedState(advertisement: advertisement));
-      } catch (e) {
-        emit(AdPlayerLoadingFailure(exception: e));
-      }
+    try {
+      emit(state.copyWith(isLoading: true));
+      final advertisement = await _adPlayerRepository
+          .getAdvertisementByDrugstoreId(event.settings);
+      emit(state.copyWith(
+        advertisement: advertisement,
+        isLoading: false,
+        error: '',
+      ));
+    } catch (e) {
+      emit(state.copyWith(error: e.toString(), isLoading: false));
     }
   }
+
+  _onSetSettings(AdPlayerSetSettingsEvent event, Emitter<AdPlayerState> emit) {
+    emit(state.copyWith(settings: event.settings));
+  }
+
+  @override
+  AdPlayerState fromJson(Map<String, dynamic> json) =>
+      AdPlayerState.fromJson(json);
+
+  @override
+  Map<String, dynamic>? toJson(AdPlayerState state) => state.toJson();
 }

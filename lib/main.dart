@@ -9,8 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'app_widget.dart';
 import 'features/ad_player/ad_player.dart';
 
-final getIt = GetIt.I;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -18,14 +16,16 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
 
-  getIt.registerSingleton(CacheManager(Config(
-    'advertisementCache',
+  GetIt.I.registerSingleton(CacheManager(Config(
+    'adPlayerCache',
     stalePeriod: const Duration(days: 1),
   )));
-  getIt.registerSingleton(Dio(BaseOptions(
+
+  GetIt.I.registerSingleton(Dio(BaseOptions(
     baseUrl: 'http://192.168.0.103:5051/',
   )));
-  getIt.registerSingleton(AdPlayerRepository(getIt.get<Dio>()));
+
+  GetIt.I.registerSingleton(AdPlayerRepository(GetIt.I.get<Dio>()));
 
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationDocumentsDirectory(),

@@ -1,31 +1,38 @@
 part of 'ad_player_bloc.dart';
 
-abstract class AdPlayerState extends Equatable {}
+@JsonSerializable()
+class AdPlayerState extends Equatable {
+  const AdPlayerState({
+    this.advertisement,
+    this.settings,
+    this.isLoading = false,
+    this.error = '',
+  });
 
-class AdPlayerInitial extends AdPlayerState {
+  final AdvertisementModel? advertisement;
+  final SettingsModel? settings;
+  final bool isLoading;
+  final String error;
+
+  AdPlayerState copyWith({
+    AdvertisementModel? advertisement,
+    SettingsModel? settings,
+    bool? isLoading,
+    String? error,
+  }) {
+    return AdPlayerState(
+      advertisement: advertisement ?? this.advertisement,
+      settings: settings ?? this.settings,
+      isLoading: isLoading ?? this.isLoading,
+      error: error ?? this.error,
+    );
+  }
+
+  factory AdPlayerState.fromJson(Map<String, dynamic> json) =>
+      _$AdPlayerStateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AdPlayerStateToJson(this);
+
   @override
-  List<Object?> get props => [];
-}
-
-class AdPlayerLoadingState extends AdPlayerState {
-  @override
-  List<Object?> get props => [];
-}
-
-class AdPlayerLoadedState extends AdPlayerState {
-  AdPlayerLoadedState({required this.advertisement});
-
-  final AdvertisementModel advertisement;
-
-  @override
-  List<Object?> get props => [advertisement];
-}
-
-class AdPlayerLoadingFailure extends AdPlayerState {
-  AdPlayerLoadingFailure({this.exception});
-
-  final Object? exception;
-
-  @override
-  List<Object?> get props => [exception];
+  List<Object?> get props => [advertisement, settings, isLoading, error];
 }
