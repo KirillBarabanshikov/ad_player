@@ -44,7 +44,7 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
   }
 
   String? _validate(String? value) {
-    if (value!.trim().isEmpty) {
+    if (value?.trim().isEmpty ?? true) {
       return 'Обязательно';
     }
     return null;
