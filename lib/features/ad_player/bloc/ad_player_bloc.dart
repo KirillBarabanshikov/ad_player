@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/models.dart';
 import '../repository/ad_player_repository.dart';
@@ -14,16 +15,19 @@ part 'ad_player_bloc.g.dart';
 class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
   AdPlayerBloc(this._adPlayerRepository) : super(const AdPlayerState()) {
     on<AdPlayerGetAdEvent>(_onGetAd);
+    on<AdPlayerRefetchEvent>(_onRefetch);
     on<AdPlayerSetSettingsEvent>(_onSetSettings);
   }
 
   final AdPlayerRepository _adPlayerRepository;
 
   _onGetAd(AdPlayerGetAdEvent event, Emitter<AdPlayerState> emit) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       emit(state.copyWith(isLoading: true));
       final advertisement = await _adPlayerRepository
           .getAdvertisementByDrugstoreId(event.settings);
+      prefs.setInt('lastFetchTime', DateTime.now().millisecondsSinceEpoch);
       emit(state.copyWith(
         advertisement: advertisement,
         isLoading: false,
@@ -31,6 +35,12 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
       ));
     } catch (e) {
       emit(state.copyWith(error: e.toString(), isLoading: false));
+    }
+  }
+
+  _onRefetch(AdPlayerRefetchEvent event, Emitter<AdPlayerState> emit) {
+    if (state.settings != null) {
+      add(AdPlayerGetAdEvent(settings: state.settings!));
     }
   }
 

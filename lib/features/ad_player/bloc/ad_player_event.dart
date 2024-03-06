@@ -13,6 +13,13 @@ class AdPlayerGetAdEvent extends AdPlayerEvent {
   List<Object?> get props => [settings];
 }
 
+class AdPlayerRefetchEvent extends AdPlayerEvent {
+  const AdPlayerRefetchEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class AdPlayerSetSettingsEvent extends AdPlayerEvent {
   const AdPlayerSetSettingsEvent({required this.settings});
 
