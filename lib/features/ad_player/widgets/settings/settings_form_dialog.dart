@@ -16,7 +16,7 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
   final _apiKeyController = TextEditingController();
   final _shopIdController = TextEditingController();
   final _timeUpdateController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
+  late TimeOfDay _selectedDate;
 
   @override
   void initState() {
@@ -28,6 +28,9 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
     _timeUpdateController.text = currentSettings?.timeUpdate == null
         ? ''
         : '${currentSettings?.timeUpdate.hour}:${currentSettings?.timeUpdate.minute}';
+    _selectedDate = TimeOfDay(
+        hour: currentSettings?.timeUpdate.hour ?? 0,
+        minute: currentSettings?.timeUpdate.minute ?? 0);
   }
 
   void _onSubmit() {
@@ -36,7 +39,13 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
     final settings = SettingsModel(
       apiKey: _apiKeyController.text,
       shopId: _shopIdController.text,
-      timeUpdate: _selectedDate,
+      timeUpdate: DateTime(
+        0,
+        0,
+        0,
+        _selectedDate.hour,
+        _selectedDate.minute,
+      ),
     );
 
     context
@@ -60,13 +69,7 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
     );
 
     if (timeOfDay != null) {
-      _selectedDate = DateTime(
-        _selectedDate.year,
-        _selectedDate.month,
-        _selectedDate.day,
-        timeOfDay.hour,
-        timeOfDay.minute,
-      );
+      _selectedDate = timeOfDay;
       _timeUpdateController.text = '${timeOfDay.hour}:${timeOfDay.minute}';
     }
   }

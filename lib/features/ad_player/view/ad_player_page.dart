@@ -13,24 +13,48 @@ class AdPlayerPage extends StatefulWidget {
 }
 
 class _AdPlayerPageState extends State<AdPlayerPage> {
-  @override
-  void initState() {
-    super.initState();
-    _refetch();
+  Future<void> _refetchAd() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    DateTime? lastFetchTime = prefs.getInt('lastFetchTime') != null
+        ? DateTime.fromMillisecondsSinceEpoch(prefs.getInt('lastFetchTime')!)
+        : null;
+
+    if (lastFetchTime != null &&
+        DateTime.now().difference(lastFetchTime).inDays >= 1) {
+      if (!mounted) return;
+      context.read<AdPlayerBloc>().add(const AdPlayerRefetchEvent());
+    }
   }
 
-  void _refetch() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _refetchAd(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return const AdPlayerView();
+      },
+    );
+  }
+}
 
-    if (prefs.getInt('lastFetchTime') != null) {
-      DateTime lastFetchTime =
-          DateTime.fromMillisecondsSinceEpoch(prefs.getInt('lastFetchTime')!);
-      DateTime now = DateTime.now();
-      if (now.difference(lastFetchTime).inDays >= 1) {
-        if (!mounted) return;
-        context.read<AdPlayerBloc>().add(const AdPlayerRefetchEvent());
-      }
-    }
+class AdPlayerView extends StatefulWidget {
+  const AdPlayerView({super.key});
+
+  @override
+  State<AdPlayerView> createState() => _AdPlayerViewState();
+}
+
+class _AdPlayerViewState extends State<AdPlayerView> {
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const SettingsFormDialog();
+      },
+    );
   }
 
   @override
@@ -38,14 +62,8 @@ class _AdPlayerPageState extends State<AdPlayerPage> {
     return Scaffold(
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return const SettingsFormDialog();
-            },
-          );
-        },
+        onSecondaryTap: () => _showDialog(),
+        onLongPress: () => _showDialog(),
         child: SizedBox(
           width: double.maxFinite,
           height: double.maxFinite,
