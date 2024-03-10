@@ -33,6 +33,14 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
         minute: currentSettings?.timeUpdate.minute ?? 0);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _apiKeyController.dispose();
+    _shopIdController.dispose();
+    _timeUpdateController.dispose();
+  }
+
   void _onSubmit() {
     if (!_formKey.currentState!.validate()) return;
 
