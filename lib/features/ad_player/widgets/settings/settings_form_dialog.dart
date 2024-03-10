@@ -29,8 +29,9 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
         ? ''
         : '${currentSettings?.timeUpdate.hour}:${currentSettings?.timeUpdate.minute}';
     _selectedDate = TimeOfDay(
-        hour: currentSettings?.timeUpdate.hour ?? 0,
-        minute: currentSettings?.timeUpdate.minute ?? 0);
+      hour: currentSettings?.timeUpdate.hour ?? 0,
+      minute: currentSettings?.timeUpdate.minute ?? 0,
+    );
   }
 
   @override

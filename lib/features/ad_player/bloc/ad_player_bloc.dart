@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,21 +14,27 @@ part 'ad_player_state.dart';
 part 'ad_player_bloc.g.dart';
 
 class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
-  AdPlayerBloc(this._adPlayerRepository) : super(const AdPlayerState()) {
+  AdPlayerBloc({
+    required this.adPlayerRepository,
+    required this.cacheManager,
+  }) : super(const AdPlayerState()) {
     on<AdPlayerGetAdEvent>(_onGetAd);
     on<AdPlayerRefetchEvent>(_onRefetch);
     on<AdPlayerSetSettingsEvent>(_onSetSettings);
   }
 
-  final AdPlayerRepository _adPlayerRepository;
+  final AdPlayerRepository adPlayerRepository;
+  final CacheManager cacheManager;
 
   _onGetAd(AdPlayerGetAdEvent event, Emitter<AdPlayerState> emit) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       emit(state.copyWith(isLoading: true));
-      final advertisement = await _adPlayerRepository
+      await clear();
+      await cacheManager.emptyCache();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final advertisement = await adPlayerRepository
           .getAdvertisementByDrugstoreId(event.settings);
-      prefs.setInt('lastFetchTime', DateTime.now().millisecondsSinceEpoch);
+      prefs.setInt('lastFetchDay', DateTime.now().day);
       emit(state.copyWith(
         advertisement: advertisement,
         isLoading: false,
