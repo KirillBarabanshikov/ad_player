@@ -7,11 +7,11 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../models/models.dart';
-import 'ad_player_playlist_image.dart';
-import 'ad_player_playlist_video.dart';
+import 'player_playlist_image.dart';
+import 'player_playlist_video.dart';
 
-class AdPlayerPlaylist extends StatefulWidget {
-  const AdPlayerPlaylist({
+class PlayerPlaylist extends StatefulWidget {
+  const PlayerPlaylist({
     super.key,
     required this.advertisement,
   });
@@ -19,10 +19,10 @@ class AdPlayerPlaylist extends StatefulWidget {
   final AdvertisementModel advertisement;
 
   @override
-  State<AdPlayerPlaylist> createState() => _AdPlayerPlaylistState();
+  State<PlayerPlaylist> createState() => _PlayerPlaylistState();
 }
 
-class _AdPlayerPlaylistState extends State<AdPlayerPlaylist> {
+class _PlayerPlaylistState extends State<PlayerPlaylist> {
   final PageController _pageController = PageController();
   late Timer _timer;
 
@@ -65,10 +65,10 @@ class _AdPlayerPlaylistState extends State<AdPlayerPlaylist> {
               final isVideo = isVideoFile(basename);
 
               if (isVideo) {
-                return AdPlayerPlaylistVideo(file: file);
+                return PlayerPlaylistVideo(file: file);
               }
 
-              return AdPlayerPlaylistImage(file: file);
+              return PlayerPlaylistImage(file: file);
             }
 
             return const Center(child: CircularProgressIndicator());

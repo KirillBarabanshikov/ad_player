@@ -53,11 +53,11 @@ class _AdPlayerPageState extends State<AdPlayerPage> {
                 return Center(child: Text(state.error));
               }
 
-              if (state.settings == null) {
-                return Container();
+              if (state.settings != null && state.advertisement != null) {
+                return PlayerPlaylist(advertisement: state.advertisement!);
               }
 
-              return const AdPlayerWidget();
+              return Container();
             },
           ),
         ),

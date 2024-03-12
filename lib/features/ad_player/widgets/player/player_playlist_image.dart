@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/file.dart';
 
-class AdPlayerPlaylistImage extends StatelessWidget {
-  const AdPlayerPlaylistImage({
+class PlayerPlaylistImage extends StatelessWidget {
+  const PlayerPlaylistImage({
     super.key,
     required this.file,
   });

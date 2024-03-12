@@ -5,8 +5,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:video_player/video_player.dart';
 
-class AdPlayerPlaylistVideo extends StatefulWidget {
-  const AdPlayerPlaylistVideo({
+class PlayerPlaylistVideo extends StatefulWidget {
+  const PlayerPlaylistVideo({
     super.key,
     required this.file,
   });
@@ -14,10 +14,10 @@ class AdPlayerPlaylistVideo extends StatefulWidget {
   final File file;
 
   @override
-  State<AdPlayerPlaylistVideo> createState() => _AdPlayerPlaylistVideoState();
+  State<PlayerPlaylistVideo> createState() => _PlayerPlaylistVideoState();
 }
 
-class _AdPlayerPlaylistVideoState extends State<AdPlayerPlaylistVideo> {
+class _PlayerPlaylistVideoState extends State<PlayerPlaylistVideo> {
   late VideoPlayerController _videoController;
   late Future<void> _initializeVideoPlayerFuture;
   final _cacheManager = GetIt.I.get<CacheManager>();
