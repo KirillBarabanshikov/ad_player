@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/models.dart';
 import '../repository/ad_player_repository.dart';
@@ -18,41 +19,69 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
     required this.adPlayerRepository,
     required this.cacheManager,
   }) : super(const AdPlayerState()) {
-    on<AdPlayerGetAdEvent>(_onGetAd);
-    on<AdPlayerRefetchEvent>(_onRefetch);
-    on<AdPlayerSetSettingsEvent>(_onSetSettings);
+    on<AdPlayerFetchAdEvent>(_onFetchAd);
   }
 
   final AdPlayerRepository adPlayerRepository;
   final CacheManager cacheManager;
+  Timer? _timer;
 
-  _onGetAd(AdPlayerGetAdEvent event, Emitter<AdPlayerState> emit) async {
+  _onFetchAd(AdPlayerFetchAdEvent event, Emitter<AdPlayerState> emit) async {
     try {
-      emit(state.copyWith(isLoading: true));
-      await clear();
-      await cacheManager.emptyCache();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      final advertisement = await adPlayerRepository
+      emit(state.copyWith(settings: event.settings, isLoading: true));
+      final advertisements = await adPlayerRepository
           .getAdvertisementByDrugstoreId(event.settings);
-      prefs.setInt('lastFetchDay', DateTime.now().day);
-      emit(state.copyWith(
-        advertisement: advertisement,
-        isLoading: false,
-        error: '',
-      ));
+      _refetchAd();
+      await _scheduleAd(advertisements, emit);
     } catch (e) {
-      emit(state.copyWith(error: e.toString(), isLoading: false));
+      emit(state.copyWith(error: e.toString()));
     }
   }
 
-  _onRefetch(AdPlayerRefetchEvent event, Emitter<AdPlayerState> emit) {
-    if (state.settings != null) {
-      add(AdPlayerGetAdEvent(settings: state.settings!));
-    }
+  _refetchAd() {
+    _timer?.cancel();
+
+    final settings = state.settings;
+
+    if (settings == null) return;
+
+    final currentDate = DateTime.now();
+    final selectedDate = settings.timeUpdate;
+
+    final currentMin = currentDate.hour * 60 + currentDate.minute;
+    final selectedMin = selectedDate.hour * 60 + selectedDate.minute;
+    const oneDayMin = 24 * 60;
+
+    final difference = currentMin - selectedMin;
+    final duration =
+        difference >= 0 ? oneDayMin - difference : difference.abs();
+
+    _timer = Timer(Duration(minutes: duration), () {
+      add(AdPlayerFetchAdEvent(settings: settings));
+    });
   }
 
-  _onSetSettings(AdPlayerSetSettingsEvent event, Emitter<AdPlayerState> emit) {
-    emit(state.copyWith(settings: event.settings));
+  _scheduleAd(
+    List<AdvertisementModel> advertisements,
+    Emitter<AdPlayerState> emit,
+  ) async {
+    for (var advertisement in advertisements) {
+      if (DateTime.now().isAfter(advertisement.dateEnd)) continue;
+
+      final delayBegin = advertisement.dateBegin.difference(DateTime.now());
+
+      if (delayBegin.isNegative) {
+        emit(state.copyWith(advertisement: advertisement));
+      } else {
+        await Future.delayed(delayBegin);
+        emit(state.copyWith(advertisement: advertisement));
+      }
+
+      final delayEnd = advertisement.dateEnd.difference(DateTime.now());
+      await Future.delayed(delayEnd);
+      emit(state.copyWith(advertisement: null));
+    }
+    emit(state.copyWith(advertisement: null));
   }
 
   @override

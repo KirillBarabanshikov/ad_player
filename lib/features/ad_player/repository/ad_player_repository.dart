@@ -7,7 +7,7 @@ class AdPlayerRepository {
 
   final Dio dio;
 
-  Future<AdvertisementModel> getAdvertisementByDrugstoreId(
+  Future<List<AdvertisementModel>> getAdvertisementByDrugstoreId(
     SettingsModel settings,
   ) async {
     try {
@@ -20,7 +20,13 @@ class AdPlayerRepository {
         ),
       );
 
-      return AdvertisementModel.fromJson(response.data[0]);
+      final advertisements = (response.data as List)
+          .map((e) => AdvertisementModel.fromJson(e))
+          .toList();
+
+      advertisements.sort((a, b) => a.dateBegin.compareTo(b.dateBegin));
+
+      return advertisements;
     } on DioException catch (e) {
       throw Exception(e);
     }

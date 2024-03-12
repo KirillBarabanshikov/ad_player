@@ -17,14 +17,14 @@ class AdPlayerState extends Equatable {
   AdPlayerState copyWith({
     AdvertisementModel? advertisement,
     SettingsModel? settings,
-    bool? isLoading,
-    String? error,
+    bool isLoading = false,
+    String error = '',
   }) {
     return AdPlayerState(
-      advertisement: advertisement ?? this.advertisement,
+      advertisement: advertisement,
       settings: settings ?? this.settings,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      isLoading: isLoading,
+      error: error,
     );
   }
 

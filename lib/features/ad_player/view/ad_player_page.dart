@@ -12,6 +12,17 @@ class AdPlayerPage extends StatefulWidget {
 }
 
 class _AdPlayerPageState extends State<AdPlayerPage> {
+  @override
+  void initState() {
+    super.initState();
+    final adPlayerBloc = context.read<AdPlayerBloc>();
+    final settings = adPlayerBloc.state.settings;
+
+    if (settings != null) {
+      adPlayerBloc.add(AdPlayerFetchAdEvent(settings: settings));
+    }
+  }
+
   void _showDialog() {
     showDialog(
       context: context,
@@ -31,18 +42,8 @@ class _AdPlayerPageState extends State<AdPlayerPage> {
         child: SizedBox(
           width: double.maxFinite,
           height: double.maxFinite,
-          child: BlocConsumer<AdPlayerBloc, AdPlayerState>(
+          child: BlocBuilder<AdPlayerBloc, AdPlayerState>(
             bloc: context.read<AdPlayerBloc>(),
-            listenWhen: (previous, current) {
-              return previous.settings != current.settings;
-            },
-            listener: (context, state) {
-              if (state.settings != null) {
-                context
-                    .read<AdPlayerBloc>()
-                    .add(AdPlayerGetAdEvent(settings: state.settings!));
-              }
-            },
             builder: (context, state) {
               if (state.isLoading) {
                 return const Center(child: CircularProgressIndicator());
@@ -54,9 +55,9 @@ class _AdPlayerPageState extends State<AdPlayerPage> {
 
               if (state.settings == null) {
                 return Container();
-              } else {
-                return const AdPlayerWidget();
               }
+
+              return const AdPlayerWidget();
             },
           ),
         ),

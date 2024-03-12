@@ -57,9 +57,7 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
       ),
     );
 
-    context
-        .read<AdPlayerBloc>()
-        .add(AdPlayerSetSettingsEvent(settings: settings));
+    context.read<AdPlayerBloc>().add(AdPlayerFetchAdEvent(settings: settings));
 
     Navigator.of(context).pop();
   }
