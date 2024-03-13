@@ -59,9 +59,6 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
 
     final duration = selectedSeconds - currentSeconds;
 
-    // TODO
-    print('refetch сработает через $duration');
-
     _timer = Timer(Duration(seconds: duration), () {
       add(AdPlayerFetchAdEvent(settings: settings));
     });
@@ -96,8 +93,6 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
       await Future.delayed(delayEnd);
       emit(state.copyWith(advertisement: null));
     }
-    // TODO
-    emit(state.copyWith(advertisement: null));
   }
 
   @override
