@@ -26,11 +26,15 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
   final CacheManager cacheManager;
   Timer? _timer;
 
-  _onFetchAd(AdPlayerFetchAdEvent event, Emitter<AdPlayerState> emit) async {
+  Future<void> _onFetchAd(
+    AdPlayerFetchAdEvent event,
+    Emitter<AdPlayerState> emit,
+  ) async {
     try {
       emit(state.copyWith(settings: event.settings, isLoading: true));
       final advertisements = await adPlayerRepository
           .getAdvertisementByDrugstoreId(event.settings);
+      emit(state.copyWith(isLoading: false));
       _refetchAd();
       await _scheduleAd(advertisements, emit);
     } catch (e) {
@@ -38,30 +42,36 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
     }
   }
 
-  _refetchAd() {
+  void _refetchAd() {
     _timer?.cancel();
 
     final settings = state.settings;
 
     if (settings == null) return;
 
-    final currentDate = DateTime.now();
-    final selectedDate = settings.timeUpdate;
+    final currentSeconds = _getTotalSeconds(DateTime.now());
+    int selectedSeconds = _getTotalSeconds(settings.timeUpdate);
+    const oneDaySeconds = 24 * 3600;
 
-    final currentMin = currentDate.hour * 60 + currentDate.minute;
-    final selectedMin = selectedDate.hour * 60 + selectedDate.minute;
-    const oneDayMin = 24 * 60;
+    if (selectedSeconds <= currentSeconds) {
+      selectedSeconds += oneDaySeconds;
+    }
 
-    final difference = currentMin - selectedMin;
-    final duration =
-        difference >= 0 ? oneDayMin - difference : difference.abs();
+    final duration = selectedSeconds - currentSeconds;
 
-    _timer = Timer(Duration(minutes: duration), () {
+    // TODO
+    print('refetch сработает через $duration');
+
+    _timer = Timer(Duration(seconds: duration), () {
       add(AdPlayerFetchAdEvent(settings: settings));
     });
   }
 
-  _scheduleAd(
+  int _getTotalSeconds(DateTime dateTime) {
+    return dateTime.hour * 3600 + dateTime.minute * 60 + dateTime.second;
+  }
+
+  Future<void> _scheduleAd(
     List<AdvertisementModel> advertisements,
     Emitter<AdPlayerState> emit,
   ) async {
@@ -69,6 +79,11 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
       if (DateTime.now().isAfter(advertisement.dateEnd)) continue;
 
       final delayBegin = advertisement.dateBegin.difference(DateTime.now());
+
+      // TODO
+      emit(state.copyWith(
+        error: 'до начала ${advertisement.name}: $delayBegin',
+      ));
 
       if (delayBegin.isNegative) {
         emit(state.copyWith(advertisement: advertisement));
@@ -81,6 +96,7 @@ class AdPlayerBloc extends HydratedBloc<AdPlayerEvent, AdPlayerState> {
       await Future.delayed(delayEnd);
       emit(state.copyWith(advertisement: null));
     }
+    // TODO
     emit(state.copyWith(advertisement: null));
   }
 

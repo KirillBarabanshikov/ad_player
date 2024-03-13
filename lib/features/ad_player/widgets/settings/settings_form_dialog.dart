@@ -23,7 +23,9 @@ class _SettingsFormDialogState extends State<SettingsFormDialog> {
     super.initState();
     final currentSettings = context.read<AdPlayerBloc>().state.settings;
 
-    _apiKeyController.text = currentSettings?.apiKey ?? '';
+    // TODO
+    _apiKeyController.text =
+        currentSettings?.apiKey ?? '4a81161c-64c1-46fa-899c-fe77482f7ed3';
     _shopIdController.text = currentSettings?.shopId ?? '';
     _timeUpdateController.text = currentSettings?.timeUpdate == null
         ? ''
